@@ -1,2 +1,3 @@
 Flask==3.0.3
 PyGuitarPro==0.10
+mido==1.3.3
