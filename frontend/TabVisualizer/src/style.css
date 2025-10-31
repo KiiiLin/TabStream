@@ -1,0 +1,119 @@
+:root {
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #242424;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  font-weight: 500;
+  color: #646cff;
+  text-decoration: inherit;
+}
+a:hover {
+  color: #535bf2;
+}
+
+body {
+  margin: 0 ;
+  display: flex;
+  place-items: center;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+h1 {
+  font-size: 3.2em;
+  line-height: 1.1;
+}
+
+#app {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+.upload-box {
+    width: 900px;               
+    height: 300px;              
+    border: 2px dashed #333;   
+    border-radius: 15px;       
+    display: flex;             
+    align-items: center;      
+    justify-content: center;    
+    font-size: 18px;           
+    color: #555;               
+    cursor: pointer;            
+    transition: background 0.3s, color 0.3s;
+}
+
+.upload-box:hover {
+    background-color: #f0f0f0; 
+    color: #000;
+}
+
+.upload-box.dragover {
+    background-color: #e0e0e0;
+    border-color: #007bff;
+    color: #007bff;
+}
+
+.progress-container {
+  margin-top: 20px;
+  text-align: center;
+}
+
+progress {
+  width: 300px;
+  height: 20px;
+  border-radius: 8px;
+  overflow: hidden;
+  appearance: none;
+}
+
+progress::-webkit-progress-bar {
+  background-color: #eee;
+  border-radius: 8px;
+}
+
+progress::-webkit-progress-value {
+  background-color: #007bff;
+  border-radius: 8px;
+}
+
+progress.succeed::-webkit-progress-value {
+  background-color: #00ff0d;
+}
+
+progress.error::-webkit-progress-value {
+  background-color: #e74c3c;
+}
+
+.file-name {
+    text-align: center;
+    margin-top: 15px;
+    color: #333;
+    font-size: 16px;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    color: #213547;
+    background-color: #ffffff;
+  }
+  a:hover {
+    color: #747bff;
+  }
+  button {
+    background-color: #f9f9f9;
+  }
+}
