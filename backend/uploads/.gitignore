@@ -1,0 +1,11 @@
+# 忽略 Guitar Pro 文件
+*.gp
+*.gp3
+*.gp4
+*.gp5
+
+# 忽略 JSON 解析结果文件
+*.json
+
+# 但保留 .gitignore 自己
+!.gitignore

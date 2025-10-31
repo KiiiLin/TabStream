@@ -69,15 +69,26 @@ h1 {
 
 .progress-container {
   margin-top: 20px;
-  text-align: center;
+  display: flex;               
+  justify-content: center;     
+  align-items: center;         
+  gap: 10px;                   
+  width: 100%;
 }
 
 progress {
-  width: 300px;
-  height: 20px;
+  width: 600px;
+  height: 18px;
   border-radius: 8px;
   overflow: hidden;
   appearance: none;
+}
+
+#progressText {
+  width: 50px;                 
+  text-align: right;          
+  font-size: 16px;
+  color: #333;
 }
 
 progress::-webkit-progress-bar {
@@ -103,6 +114,11 @@ progress.error::-webkit-progress-value {
     margin-top: 15px;
     color: #333;
     font-size: 16px;
+}
+
+.fade-out {
+  opacity: 0;
+  transition: opacity 1s ease;
 }
 
 @media (prefers-color-scheme: light) {
