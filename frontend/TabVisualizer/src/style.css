@@ -109,6 +109,37 @@ progress.error::-webkit-progress-value {
   background-color: #e74c3c;
 }
 
+#trackList {
+    position: fixed;         /* 固定悬浮 */
+    bottom: 20px;            /* 距离底部 20px */
+    left: 50%;               /* 水平居中 */
+    transform: translateX(-50%);
+    background-color: rgba(0,0,0,0.8);
+    padding: 10px 20px;
+    border-radius: 12px;
+    display: flex;
+    gap: 8px;
+    z-index: 9999;
+    flex-wrap: wrap;
+    max-width: 90%;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+.track-btn {
+    background-color: #fff;
+    color: #333;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.2s;
+}
+.track-btn:hover {
+    background-color: #00aaff;
+    color: #fff;
+    transform: scale(1.05);
+}
+
 .file-name {
     text-align: center;
     margin-top: 15px;

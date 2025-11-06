@@ -6,6 +6,7 @@
 
 # 忽略 JSON 解析结果文件
 *.json
+*.vextab
 
 # 但保留 .gitignore 自己
 !.gitignore

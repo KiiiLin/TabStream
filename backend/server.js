@@ -4,21 +4,23 @@ import path from 'path';
 import fs from 'fs';
 import cors from 'cors';
 import { fileURLToPath } from 'url';
-import { spawn } from 'child_process'; 
+import { spawn } from 'child_process';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
 app.use(cors());
 
-// 上传文件存储配置
+// 上传文件目录配置
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, path.join(__dirname, 'uploads'));
+    const uploadDir = path.join(__dirname, 'uploads');
+    if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
+    cb(null, uploadDir);
   },
   filename: (req, file, cb) => {
-    const ext = path.extname(file.originalname);  
-    const base = path.basename(file.originalname, ext); 
-    cb(null, `${base}-${Date.now()}${ext}`); 
+    const ext = path.extname(file.originalname);
+    const base = path.basename(file.originalname, ext);
+    cb(null, `${base}-${Date.now()}${ext}`);
   },
 });
 
@@ -26,45 +28,77 @@ const upload = multer({ storage });
 
 app.post('/upload', upload.single('file'), (req, res) => {
   const filePath = req.file.path;
+  console.log('Uploaded GP file:', filePath);
 
-  // 调用 Python 脚本解析 GP 文件
-  const py = spawn('python3', [path.join(__dirname, 'utils/gp_parser.py'), filePath]);
+  // 调用 Python 多轨解析
+  const py = spawn('python3', [
+    path.join(__dirname, 'utils/gp_parser.py'),
+    filePath
+  ]);
 
-  let pyOutput = '';
+  let pyChunks = [];   // ✅ 防止 JSON 被拆段
   let pyError = '';
 
-  py.stdout.on('data', chunk => pyOutput += chunk.toString());
+  py.stdout.on('data', chunk => pyChunks.push(chunk));
   py.stderr.on('data', chunk => pyError += chunk.toString());
 
   py.on('close', (code) => {
-    if (code === 0 && pyOutput) {
-      try {
-        const pyResult = JSON.parse(pyOutput);
+    // ✅ 合并所有输出，保证 JSON 完整性
+    const pyOutput = Buffer.concat(pyChunks).toString();
 
-        if (pyResult.json_path) {
-          // 读取 Python 生成的 JSON 文件
-          fs.readFile(pyResult.json_path, 'utf-8', (err, fileData) => {
-            if (err) {
-              res.status(500).json({ error: 'Failed to read generated JSON', details: err.message });
-              return;
-            }
+    if (code !== 0) {
+      return res.status(500).json({
+        error: 'Python script failed',
+        details: pyError || pyOutput
+      });
+    }
 
-            try {
-              const parsedData = JSON.parse(fileData);
-              res.json(parsedData); // 返回给前端
-            } catch (e) {
-              res.status(500).json({ error: 'Failed to parse JSON file', details: e.message });
-            }
+    let resultJson;
+    try {
+      resultJson = JSON.parse(pyOutput);
+    } catch (err) {
+      return res.status(500).json({
+        error: 'Failed to parse JSON from Python',
+        details: err.message,
+        raw: pyOutput
+      });
+    }
+
+    if (!resultJson.tracks || !Array.isArray(resultJson.tracks)) {
+      return res.status(500).json({ error: 'Invalid Python output: tracks missing' });
+    }
+
+    let pending = resultJson.tracks.length;
+    const tracksResult = [];
+
+    if (pending === 0) {
+      return res.json({ tracks: [] });
+    }
+
+    resultJson.tracks.forEach(track => {
+      const vextabPath = track.vextab_path;
+
+      fs.readFile(vextabPath, 'utf-8', (err, content) => {
+        if (err) {
+          tracksResult.push({
+            name: track.track_name,
+            vextab: null,
+            error: `Failed to read file: ${vextabPath}`
           });
         } else {
-          res.status(500).json({ error: 'Python script did not return json_path' });
+          tracksResult.push({
+            name: track.track_name,
+            vextab: content
+          });
         }
-      } catch (e) {
-        res.status(500).json({ error: 'Failed to parse Python output', details: e.message });
-      }
-    } else {
-      res.status(500).json({ error: 'Python script failed', details: pyError || pyOutput });
-    }
+
+        pending--;
+
+        if (pending === 0) {
+          res.json({ tracks: tracksResult });
+        }
+      });
+    });
   });
 });
 
