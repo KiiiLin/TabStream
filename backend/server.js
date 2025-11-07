@@ -10,7 +10,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
 app.use(cors());
 
-// 上传文件目录配置
+// 上传目录
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     const uploadDir = path.join(__dirname, 'uploads');
@@ -23,27 +23,35 @@ const storage = multer.diskStorage({
     cb(null, `${base}-${Date.now()}${ext}`);
   },
 });
-
 const upload = multer({ storage });
 
 app.post('/upload', upload.single('file'), (req, res) => {
   const filePath = req.file.path;
-  console.log('Uploaded GP file:', filePath);
+  const ext = path.extname(filePath).toLowerCase();
+  console.log('Uploaded file:', filePath);
 
-  // 调用 Python 多轨解析
-  const py = spawn('python3', [
-    path.join(__dirname, 'utils/gp_parser.py'),
-    filePath
-  ]);
+  // ✅ 自动判断使用哪个解析脚本
+  let parserScript;
+  if (['.gp3', '.gp4', '.gp5'].includes(ext)) {
+    parserScript = path.join(__dirname, 'utils/gp_parser.py');
+  } else if (['.gpx', '.gp'].includes(ext)) {
+    parserScript = path.join(__dirname, 'utils/gpx_parser.py');
+  } else {
+    return res.status(400).json({ error: `Unsupported file type: ${ext}` });
+  }
 
-  let pyChunks = [];   // ✅ 防止 JSON 被拆段
+  console.log(`Using parser: ${path.basename(parserScript)}`);
+
+  // 调用对应的 Python 脚本
+  const py = spawn('python3', [parserScript, filePath]);
+
+  let pyChunks = [];
   let pyError = '';
 
   py.stdout.on('data', chunk => pyChunks.push(chunk));
   py.stderr.on('data', chunk => pyError += chunk.toString());
 
   py.on('close', (code) => {
-    // ✅ 合并所有输出，保证 JSON 完整性
     const pyOutput = Buffer.concat(pyChunks).toString();
 
     if (code !== 0) {
@@ -93,7 +101,6 @@ app.post('/upload', upload.single('file'), (req, res) => {
         }
 
         pending--;
-
         if (pending === 0) {
           res.json({ tracks: tracksResult });
         }
@@ -102,4 +109,4 @@ app.post('/upload', upload.single('file'), (req, res) => {
   });
 });
 
-app.listen(3000, () => console.log('Server running on http://localhost:3000'));
+app.listen(3000, () => console.log('✅ Server running on http://localhost:3000'));

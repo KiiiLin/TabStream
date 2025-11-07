@@ -26,8 +26,10 @@ fileInput.addEventListener('change', e => handleFile(e.target.files[0]));
 // -------------------- 文件处理 --------------------
 function handleFile(file) {
     if (!file) return;
-    if (!/\.gp[3-5]?$/i.test(file.name)) 
-        return showError('仅支持 .gp / .gp3 / .gp4 / .gp5 文件');
+
+    if (!/\.gp(3|4|5|x)?$/i.test(file.name)) {
+        return showError('仅支持 .gp / .gpx / .gp3 / .gp4 / .gp5 文件');
+    }
 
     uploadFile(file);
 }
@@ -73,7 +75,6 @@ function uploadFile(file) {
             progressBar.classList.add('succeed');
             fileName.textContent = `上传成功：${file.name}`;
 
-            // ✅ 上传成功后淡出所有上传相关 UI
             fadeOutUploadUI();
 
         } else {
@@ -116,7 +117,6 @@ function fadeIn(element) {
 }
 
 function fadeOutUploadUI() {
-    // 上传成功隐藏所有上传相关元素
     fadeOut(uploadBox);
     fadeOut(progressContainer);
     fadeOut(fileName);
@@ -135,7 +135,5 @@ function resetUploadUI() {
 function showError(msg) {
     fileName.textContent = msg;
     progressBar.classList.add('error');
-
-    // 上传失败仍显示上传框、进度条，允许重试
-    resetUploadUI();
+    resetUploadUI(); // 保留上传框允许重试
 }
