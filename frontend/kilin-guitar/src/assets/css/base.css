@@ -1,0 +1,306 @@
+/* ==============================================================
+*  base
+* ============================================================ */
+/*! normalize.css v8.0.0 | MIT License | github.com/necolas/normalize.css */
+html {
+  line-height: 1.15;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+}
+
+h1 {
+  font-size: inherit;
+  margin: 0;
+}
+
+hr {
+  box-sizing: content-box;
+  height: 0;
+  overflow: visible;
+}
+
+pre {
+  font-family: monospace, monospace;
+  font-size: 1em;
+}
+
+a {
+  background-color: transparent;
+}
+
+abbr[title] {
+  border-bottom: none;
+  text-decoration: underline;
+  -webkit-text-decoration: underline dotted;
+          text-decoration: underline dotted;
+}
+
+b, strong {
+  font-weight: bolder;
+}
+
+code, kbd, samp {
+  font-family: monospace, monospace;
+  font-size: 1em;
+}
+
+small {
+  font-size: 80%;
+}
+
+sub, sup {
+  font-size: 75%;
+  line-height: 0;
+  position: relative;
+  vertical-align: baseline;
+}
+
+sub {
+  bottom: -0.25em;
+}
+
+sup {
+  top: -0.5em;
+}
+
+img {
+  border-style: none;
+}
+
+button, input, optgroup, select, textarea {
+  font-family: inherit;
+  font-size: 100%;
+  line-height: 1.15;
+  margin: 0;
+}
+
+button, input {
+  overflow: visible;
+}
+
+button, select {
+  text-transform: none;
+}
+
+[type=button], [type=reset], [type=submit], button {
+  -webkit-appearance: button;
+}
+
+[type=button]::-moz-focus-inner, [type=reset]::-moz-focus-inner, [type=submit]::-moz-focus-inner, button::-moz-focus-inner {
+  border-style: none;
+  padding: 0;
+}
+
+[type=button]:-moz-focusring, [type=reset]:-moz-focusring, [type=submit]:-moz-focusring, button:-moz-focusring {
+  outline: 1px dotted ButtonText;
+}
+
+fieldset {
+  padding: 0.35em 0.75em 0.625em;
+}
+
+legend {
+  box-sizing: border-box;
+  color: inherit;
+  display: table;
+  max-width: 100%;
+  padding: 0;
+  white-space: normal;
+}
+
+progress {
+  vertical-align: baseline;
+}
+
+textarea {
+  overflow: auto;
+}
+
+[type=checkbox], [type=radio] {
+  box-sizing: border-box;
+  padding: 0;
+}
+
+[type=number]::-webkit-inner-spin-button, [type=number]::-webkit-outer-spin-button {
+  height: auto;
+}
+
+[type=search] {
+  -webkit-appearance: textfield;
+  outline-offset: -2px;
+}
+
+[type=search]::-webkit-search-decoration {
+  -webkit-appearance: none;
+}
+
+::-webkit-file-upload-button {
+  -webkit-appearance: button;
+  font: inherit;
+}
+
+details {
+  display: block;
+}
+
+summary {
+  display: list-item;
+}
+
+template {
+  display: none;
+}
+
+[hidden] {
+  display: none;
+}
+
+
+body {
+  word-wrap: break-word;
+}
+
+section, main {
+  display: block;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  outline: none;
+}
+
+i, em {
+  font-style: normal;
+}
+
+table {
+  border-collapse: collapse;
+}
+
+li {
+  list-style: none;
+}
+
+img {
+  max-width: 100%;
+  line-height: 0;
+}
+
+* {
+  background-repeat: no-repeat;
+  background-position: 50% 50%;
+  background-size: cover;
+}
+
+/* ==============================================================
+*  contents
+* ============================================================ */
+html, body {
+  height: 100%;
+}
+
+body {
+  background: #fff;
+  word-wrap: break-word;
+  font-family: a-otf-gothic-bbb-pr6n, sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  color: #222;
+  font-size: 14px;
+  letter-spacing: 0.1em;
+  line-height: 1.8;
+}
+
+#loading {
+  width: 100%;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 50;
+  background: #fff;
+}
+#loading .block--name {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translateY(-50%) translateX(-50%);
+}
+
+.load-finish #loading {
+  display: none;
+}
+
+.wrap {
+  min-height: 100%;
+  position: relative;
+}
+
+.inview, .inview_b {
+  opacity: 0;
+  transition: all 0.5s ease;
+  transform: translateY(20px);
+}
+
+.inview {
+  transition-delay: 0.2s;
+}
+
+.inview_b {
+  transition-delay: 0.5s;
+}
+
+.inview.view,
+.inview_b.view {
+  opacity: 1;
+  transform: translateY(0px);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+.clearfix::after {
+  content: "";
+  display: block;
+  clear: both;
+}
+
+img {
+  max-width: 100%;
+  background-repeat: no-repeat;
+  background-position: 50% 50%;
+  background-size: cover;
+  line-height: 0;
+}
+
+::-moz-selection {
+  color: #fff;
+  background: #73c0c3;
+}
+
+::selection {
+  color: #fff;
+  background: #73c0c3;
+}
+
+::-moz-selection {
+  color: #fff;
+  background: #73c0c3;
+}
+
+.svg-symbol {
+  display: none !important;
+}
+
+/* autofill */
+input:-webkit-autofill,
+textarea:-webkit-autofill,
+select:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0px 1000px #fff inset;
+}
