@@ -1962,19 +1962,20 @@ header .logo .logo-icon {
   bottom: 20px;
   right: 20px;
   z-index: 1000;
-  background: rgba(255, 255, 255, 0.95);
-  padding: 10px 12px;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  background: rgba(255, 183, 197, 0.95);
+  padding: 8px 10px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(255, 183, 197, 0.3);
   backdrop-filter: blur(10px);
   transition: all 0.3s ease;
-  width: calc(24px * 4 + 16px);
-  max-width: calc(24px * 4 + 16px);
+  width: calc(20px * 3 + 16px);
+  max-width: calc(20px * 3 + 16px);
 }
 
 .footer:hover {
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 6px 16px rgba(255, 183, 197, 0.4);
   transform: translateY(-2px);
+  background: rgba(255, 183, 197, 1);
 }
 
 .footer-content {
@@ -1987,23 +1988,23 @@ header .logo .logo-icon {
 .footer-social {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
 }
 
 .social-link {
   display: inline-block;
   transition: transform 0.2s ease, opacity 0.2s ease;
-  opacity: 0.7;
+  opacity: 0.9;
 }
 
 .social-link:hover {
-  transform: scale(1.1);
+  transform: scale(1.15);
   opacity: 1;
 }
 
 .social-icon {
-  width: 24px;
-  height: 24px;
+  width: 20px;
+  height: 20px;
   display: block;
   border-radius: 4px;
 }
@@ -2013,8 +2014,8 @@ header .logo .logo-icon {
     bottom: 15px;
     right: 15px;
     padding: 8px 10px;
-    width: calc(20px * 4 + 12px);
-    max-width: calc(20px * 4 + 12px);
+    width: calc(20px * 3 + 12px);
+    max-width: calc(20px * 3 + 12px);
   }
   
   .footer-content {
