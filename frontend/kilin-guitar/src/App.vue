@@ -1,7 +1,7 @@
 <template>
   <div>
     <HeaderMain />
-    <HeroCarousel />
+    <router-view />
     <FooterMain />
   </div>
 </template>

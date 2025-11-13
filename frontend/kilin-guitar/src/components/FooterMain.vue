@@ -1,13 +1,13 @@
 <template>
   <footer class="footer">
-    <div class="container">
-      <div class="row">
-        <div>© {{ year }} Kilin&amp;Guitar</div>
-        <div>
-          <a href="https://twitter.com" target="_blank" rel="noopener">Twitter</a>
-          <span style="padding:0 6px;color:#ddd">·</span>
-          <a href="https://youtube.com" target="_blank" rel="noopener">YouTube</a>
-        </div>
+    <div class="footer-content">
+      <div class="footer-social">
+        <a href="https://twitter.com" target="_blank" rel="noopener" class="social-link" title="Twitter">
+          <img src="https://via.placeholder.com/24x24/1DA1F2/FFFFFF?text=🐦" alt="Twitter" class="social-icon" />
+        </a>
+        <a href="https://youtube.com" target="_blank" rel="noopener" class="social-link" title="YouTube">
+          <img src="https://via.placeholder.com/24x24/FF0000/FFFFFF?text=▶" alt="YouTube" class="social-icon" />
+        </a>
       </div>
     </div>
   </footer>
@@ -15,7 +15,6 @@
 
 <script>
 export default {
-  name: 'FooterMain',
-  data(){ return { year: new Date().getFullYear() } }
+  name: 'FooterMain'
 }
 </script>

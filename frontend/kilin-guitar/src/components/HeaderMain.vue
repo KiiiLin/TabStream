@@ -1,11 +1,12 @@
 <template>
   <header :class="{ 'menu-open': menuOpen }">
-    <!-- 左上角 Logo -->
+    <!-- 右上角 Logo -->
     <div class="logo">
-      <a href="#">
-        <svg width="80" height="40">
-          <use href="/src/assets/sprite.svg#fc-logo"></use>
+      <a href="https://github.com/KiiiLin/TabStream" class="logo-link">
+        <svg width="80" height="50" viewBox="0 0 80 50" xmlns="http://www.w3.org/2000/svg" class="logo-text">
+          <text x="0" y="33" font-size="28" font-weight="bold" fill="#222">Kilin&Guitar</text>
         </svg>
+        <img src="/author.svg" alt="Logo" class="logo-icon" />
       </a>
     </div>
 
@@ -27,10 +28,10 @@
     <div class="drawer" v-show="menuOpen">
       <nav class="g-nav">
         <ul>
-          <li><a href="#"><span>Home</span></a></li>
-          <li><a href="#"><span>Works</span></a></li>
-          <li><a href="#"><span>About</span></a></li>
-          <li><a href="#"><span>Contact</span></a></li>
+          <li><a href="/"><span>Home</span></a></li>
+          <li><a href="#"><span>Scores</span></a></li>
+          <li><a href="/covers"><span>Covers</span></a></li>
+          <li><a href="#"><span>Memories</span></a></li>
         </ul>
       </nav>
     </div>
