@@ -21,6 +21,17 @@
 
     <!-- 主要内容区域 -->
     <div class="memories-container">
+      <!-- 加载状态 -->
+      <div v-if="loading" class="loading-message">
+        正在加载回忆列表...
+      </div>
+      
+      <!-- 错误状态 -->
+      <div v-if="error && !loading" class="error-message">
+        {{ error }}
+      </div>
+      
+      <!-- 回忆列表 -->
       <div 
         v-for="(memory, index) in memories" 
         :key="memory.id" 
@@ -30,7 +41,7 @@
         :data-memory-id="memory.id"
       >
         <!-- 居中图片 -->
-        <div class="memory-image-wrapper" @click="openModal(memory)">
+        <div v-if="memory.image" class="memory-image-wrapper" @click="openModal(memory)">
           <img :src="memory.image" :alt="memory.description" class="memory-image" />
         </div>
         
@@ -50,75 +61,47 @@ export default {
   data() {
     return {
       selectedMemory: null,
-      memories: [
-        {
-          id: 1,
-          image: 'https://picsum.photos/600/400?random=1',
-          date: '2024-01-15',
-          description: '这是一个美好的回忆描述。',
-          detailedDescription: '这是一个美好的回忆描述。记录了某个特殊的时刻和感受。那是一个温暖的午后，阳光透过窗户洒在桌面上，一切都显得那么宁静而美好。这个瞬间让我感受到了生活的美好，值得永远珍藏。',
-          visible: false
-        },
-        {
-          id: 2,
-          image: 'https://picsum.photos/600/400?random=2',
-          date: '2024-02-20',
-          description: '另一个值得珍藏的瞬间。',
-          detailedDescription: '另一个值得珍藏的瞬间。这些回忆构成了我们生活的点点滴滴。每一个瞬间都承载着特殊的意义，让我们在回忆中感受到温暖和幸福。这些美好的时光将成为我们人生中最宝贵的财富。',
-          visible: false
-        },
-        {
-          id: 3,
-          image: 'https://picsum.photos/600/400?random=3',
-          date: '2024-03-10',
-          description: '春天的午后，阳光洒在脸上。',
-          detailedDescription: '春天的午后，阳光洒在脸上，这一刻值得永远铭记。万物复苏的季节，一切都充满了生机和希望。在这样的日子里，心情也变得格外轻松愉快，仿佛所有的烦恼都随风而去。',
-          visible: false
-        },
-        {
-          id: 4,
-          image: 'https://picsum.photos/600/400?random=4',
-          date: '2024-04-25',
-          description: '与朋友们一起度过的快乐时光。',
-          detailedDescription: '与朋友们一起度过的快乐时光，这些回忆让我们感到温暖。友谊是人生中最珍贵的礼物，与朋友们在一起的每一刻都是那么珍贵。我们一起笑，一起哭，一起经历生活的酸甜苦辣，这些都将成为我们最美好的回忆。',
-          visible: false
-        },
-        {
-          id: 5,
-          image: 'https://picsum.photos/600/400?random=5',
-          date: '2024-05-30',
-          description: '一次难忘的旅行，风景如画。',
-          detailedDescription: '一次难忘的旅行，风景如画，心情如诗。旅行的意义不仅在于看风景，更在于感受不同的文化和生活方式。每一次旅行都是一次心灵的洗礼，让我们更加了解这个世界，也更加了解自己。',
-          visible: false
-        },
-        {
-          id: 6,
-          image: 'https://picsum.photos/600/400?random=6',
-          date: '2024-06-15',
-          description: '夏日的傍晚，微风轻拂。',
-          detailedDescription: '夏日的傍晚，微风轻拂，一切都是那么美好。夏天的夜晚总是那么迷人，天空中的星星闪烁着光芒，微风带来阵阵凉意。在这样的夜晚，一切都显得那么宁静而祥和，让人感到无比的舒适和放松。',
-          visible: false
-        },
-        {
-          id: 7,
-          image: 'https://picsum.photos/600/400?random=7',
-          date: '2024-07-20',
-          description: '海边的日落，金色的光芒。',
-          detailedDescription: '海边的日落，金色的光芒洒在海面上，美得让人屏息。大海总是能给人带来无限的遐想和感动。站在海边，看着夕阳慢慢落下，感受着海风的轻抚，这一刻所有的烦恼都被抛到了脑后，只剩下内心的宁静和满足。',
-          visible: false
-        },
-        {
-          id: 8,
-          image: 'https://picsum.photos/600/400?random=8',
-          date: '2024-08-10',
-          description: '音乐节上的快乐时光。',
-          detailedDescription: '音乐节上的快乐时光，音乐、人群、欢乐交织在一起。音乐有着神奇的魔力，能够将不同的人聚集在一起，共同感受节奏和旋律带来的快乐。在音乐节上，每个人都可以尽情地释放自己，享受音乐带来的无限乐趣。',
-          visible: false
-        }
-      ]
+      memories: [],
+      loading: false,
+      error: null
     }
   },
   methods: {
+    async fetchMemories() {
+      this.loading = true
+      this.error = null
+      
+      try {
+        const response = await fetch('http://localhost:3000/api/memories')
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`)
+        }
+        const data = await response.json()
+        
+        // 检查返回的数据格式
+        if (!data || !Array.isArray(data.memories)) {
+          console.error('Invalid API response:', data)
+          throw new Error('Invalid API response format')
+        }
+        
+        // 为每个回忆添加 visible 属性
+        this.memories = data.memories.map(memory => ({
+          ...memory,
+          visible: false,
+          // 将相对路径转换为完整 URL
+          image: memory.image && memory.image.startsWith('http')
+            ? memory.image
+            : memory.image
+            ? `http://localhost:3000${memory.image}`
+            : null
+        }))
+      } catch (err) {
+        console.error('Error fetching memories:', err)
+        this.error = '加载回忆列表失败，请稍后重试'
+      } finally {
+        this.loading = false
+      }
+    },
     openModal(memory) {
       this.selectedMemory = memory
       document.body.style.overflow = 'hidden'
@@ -142,37 +125,42 @@ export default {
           }
         }
       })
+    },
+    setupVisibilityObserver() {
+      // 使用 Intersection Observer 优化性能
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const memoryId = parseInt(entry.target.getAttribute('data-memory-id'))
+            const memory = this.memories.find(m => m.id === memoryId)
+            if (memory) {
+              memory.visible = true
+            }
+          }
+        })
+      }, {
+        threshold: 0.2,
+        rootMargin: '0px 0px -100px 0px'
+      })
+      
+      this.$nextTick(() => {
+        const memoryItems = document.querySelectorAll('.memory-item')
+        memoryItems.forEach((item) => {
+          observer.observe(item)
+        })
+        // 初始检查可见性
+        this.handleScroll()
+      })
     }
   },
   mounted() {
-    // 初始检查可见性
-    this.handleScroll()
+    this.fetchMemories().then(() => {
+      // 数据加载完成后设置可见性观察
+      this.setupVisibilityObserver()
+    })
     
     // 监听滚动事件
     window.addEventListener('scroll', this.handleScroll)
-    
-    // 使用 Intersection Observer 优化性能
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          const memoryId = parseInt(entry.target.getAttribute('data-memory-id'))
-          const memory = this.memories.find(m => m.id === memoryId)
-          if (memory) {
-            memory.visible = true
-          }
-        }
-      })
-    }, {
-      threshold: 0.2,
-      rootMargin: '0px 0px -100px 0px'
-    })
-    
-    this.$nextTick(() => {
-      const memoryItems = document.querySelectorAll('.memory-item')
-      memoryItems.forEach((item) => {
-        observer.observe(item)
-      })
-    })
   },
   beforeUnmount() {
     window.removeEventListener('scroll', this.handleScroll)
@@ -469,6 +457,19 @@ export default {
   .modal-description {
     font-size: 14px;
   }
+}
+
+.loading-message,
+.error-message {
+  text-align: center;
+  padding: 60px 20px;
+  font-family: aktiv-grotesk, sans-serif;
+  font-size: 18px;
+  color: #666;
+}
+
+.error-message {
+  color: #d32f2f;
 }
 </style>
 

@@ -19,6 +19,17 @@
 
     <!-- 主要内容区域 -->
     <div class="covers-container">
+      <!-- 加载状态 -->
+      <div v-if="loading" class="loading-message">
+        正在加载视频列表...
+      </div>
+      
+      <!-- 错误状态 -->
+      <div v-if="error && !loading" class="error-message">
+        {{ error }}
+      </div>
+      
+      <!-- 视频列表 -->
       <div 
         v-for="(video, index) in videos" 
         :key="video.id" 
@@ -75,66 +86,52 @@ export default {
   data() {
     return {
       selectedVideo: null,
-      videos: [
-        {
-          id: 1,
-          songName: '示例曲目 1',
-          artist: '示例艺术家 1',
-          cover: '示例翻唱者 1',
-          description: '这是一个示例视频的描述信息。',
-          thumbnail: 'https://via.placeholder.com/300x160/FFB7C5/FFFFFF?text=Video+1',
-          videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
-          tags: ['音乐', '吉他', '原创'],
-          visible: false
-        },
-        {
-          id: 2,
-          songName: '示例曲目 2',
-          artist: '示例艺术家 2',
-          cover: '示例翻唱者 2',
-          description: '这是另一个示例视频的描述。',
-          thumbnail: 'https://via.placeholder.com/300x160/FFC0CB/FFFFFF?text=Video+2',
-          videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4',
-          tags: ['翻唱', '流行'],
-          visible: false
-        },
-        {
-          id: 3,
-          songName: '示例曲目 3',
-          artist: '示例艺术家 3',
-          cover: '示例翻唱者 3',
-          description: '第三个示例视频的描述信息。',
-          thumbnail: 'https://via.placeholder.com/300x160/FF8FA3/FFFFFF?text=Video+3',
-          videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
-          tags: ['原创', '指弹'],
-          visible: false
-        },
-        {
-          id: 4,
-          songName: '示例曲目 4',
-          artist: '示例艺术家 4',
-          cover: '示例翻唱者 4',
-          description: '第四个示例视频的描述。',
-          thumbnail: 'https://via.placeholder.com/300x160/FFB7C5/FFFFFF?text=Video+4',
-          videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
-          tags: ['音乐', '演奏'],
-          visible: false
-        },
-        {
-          id: 5,
-          songName: '示例曲目 5',
-          artist: '示例艺术家 5',
-          cover: '示例翻唱者 5',
-          description: '第五个示例视频的描述。',
-          thumbnail: 'https://via.placeholder.com/300x160/FFC0CB/FFFFFF?text=Video+5',
-          videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4',
-          tags: ['流行', '弹唱'],
-          visible: false
-        }
-      ]
+      videos: [],
+      loading: false,
+      error: null
     }
   },
   methods: {
+    async fetchVideos() {
+      this.loading = true
+      this.error = null
+      
+      try {
+        const response = await fetch('http://localhost:3000/api/covers')
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`)
+        }
+        const data = await response.json()
+        
+        // 检查返回的数据格式
+        if (!data || !Array.isArray(data.covers)) {
+          console.error('Invalid API response:', data)
+          throw new Error('Invalid API response format')
+        }
+        
+        // 为每个视频添加 visible 属性
+        this.videos = data.covers.map(video => ({
+          ...video,
+          visible: false,
+          // 将相对路径转换为完整 URL
+          thumbnail: video.thumbnail && video.thumbnail.startsWith('http') 
+            ? video.thumbnail 
+            : video.thumbnail
+            ? `http://localhost:3000${video.thumbnail}`
+            : null,
+          videoUrl: video.videoUrl && video.videoUrl.startsWith('http')
+            ? video.videoUrl
+            : video.videoUrl
+            ? `http://localhost:3000${video.videoUrl}`
+            : null
+        }))
+      } catch (err) {
+        console.error('Error fetching covers:', err)
+        this.error = '加载视频列表失败，请稍后重试'
+      } finally {
+        this.loading = false
+      }
+    },
     playVideo(video) {
       this.selectedVideo = video
     },
@@ -155,38 +152,45 @@ export default {
           }
         }
       })
+    },
+    setupVisibilityObserver() {
+      // 使用 Intersection Observer 优化性能
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const videoId = parseInt(entry.target.getAttribute('data-video-id'))
+            const video = this.videos.find(v => v.id === videoId)
+            if (video) {
+              video.visible = true
+            }
+          }
+        })
+      }, {
+        threshold: 0.2,
+        rootMargin: '0px 0px -100px 0px'
+      })
+      
+      this.$nextTick(() => {
+        const videoRows = document.querySelectorAll('.video-row')
+        videoRows.forEach((row, index) => {
+          if (this.videos[index]) {
+            row.setAttribute('data-video-id', this.videos[index].id)
+            observer.observe(row)
+          }
+        })
+        // 初始检查可见性
+        this.handleScroll()
+      })
     }
   },
   mounted() {
-    // 初始检查可见性
-    this.handleScroll()
+    this.fetchVideos().then(() => {
+      // 数据加载完成后设置可见性观察
+      this.setupVisibilityObserver()
+    })
     
     // 监听滚动事件
     window.addEventListener('scroll', this.handleScroll)
-    
-    // 使用 Intersection Observer 优化性能
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          const videoId = parseInt(entry.target.getAttribute('data-video-id'))
-          const video = this.videos.find(v => v.id === videoId)
-          if (video) {
-            video.visible = true
-          }
-        }
-      })
-    }, {
-      threshold: 0.2,
-      rootMargin: '0px 0px -100px 0px'
-    })
-    
-    this.$nextTick(() => {
-      const videoRows = document.querySelectorAll('.video-row')
-      videoRows.forEach((row, index) => {
-        row.setAttribute('data-video-id', this.videos[index].id)
-        observer.observe(row)
-      })
-    })
   },
   beforeUnmount() {
     window.removeEventListener('scroll', this.handleScroll)
@@ -446,6 +450,19 @@ export default {
   .video-modal {
     padding: 20px;
   }
+}
+
+.loading-message,
+.error-message {
+  text-align: center;
+  padding: 60px 20px;
+  font-family: aktiv-grotesk, sans-serif;
+  font-size: 18px;
+  color: #666;
+}
+
+.error-message {
+  color: #d32f2f;
 }
 </style>
 

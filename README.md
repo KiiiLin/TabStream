@@ -2,7 +2,7 @@
 
 ## How to use
 ``` bash  
-cd frontend/TabVisualizer
+cd frontend/kilin-guitar
 npm run dev
 ```  
 
