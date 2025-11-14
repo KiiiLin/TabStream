@@ -20,6 +20,30 @@
 
     <!-- 正常内容 -->
     <div class="home-content" :class="{ 'content-visible': animationComplete }">
+      <!-- 导航框 -->
+      <div class="navigation-boxes">
+        <router-link to="/scores" class="nav-box">
+          <div class="nav-box-content">
+            <h2 class="nav-title">Scores</h2>
+            <p class="nav-description">上传吉他谱文件，查看精美的乐谱展示</p>
+          </div>
+        </router-link>
+        
+        <router-link to="/covers" class="nav-box">
+          <div class="nav-box-content">
+            <h2 class="nav-title">Covers</h2>
+            <p class="nav-description">浏览精彩的音乐翻唱视频和作品集</p>
+          </div>
+        </router-link>
+        
+        <router-link to="/memories" class="nav-box">
+          <div class="nav-box-content">
+            <h2 class="nav-title">Memories</h2>
+            <p class="nav-description">珍藏美好的音乐时光和回忆瞬间</p>
+          </div>
+        </router-link>
+      </div>
+      
       <h1>Welcome to Kilin&Guitar</h1>
     </div>
   </div>
@@ -184,10 +208,89 @@ export default {
   left: 0;
   right: 0;
   color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 40px;
+  padding-bottom: 20px;
+  justify-content: flex-end;
+}
+
+.home-content h1 {
+  margin: 0;
+  font-family: aktiv-grotesk, sans-serif;
+  font-size: 24px;
+  font-weight: 400;
+  letter-spacing: 0.05em;
+  color: #fff;
 }
 
 .home-content.content-visible {
   opacity: 1;
+}
+
+/* 导航框容器 */
+.navigation-boxes {
+  display: flex;
+  gap: 30px;
+  justify-content: center;
+  align-items: center;
+  max-width: 1200px;
+  width: 100%;
+  padding: 0 20px;
+}
+
+/* 导航框 */
+.nav-box {
+  flex: 1;
+  max-width: 320px;
+  min-width: 250px;
+  background: rgba(255, 183, 197, 0.85);
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  padding: 40px 30px;
+  text-decoration: none;
+  color: #222;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(255, 183, 197, 0.3);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.nav-box:hover {
+  transform: translateY(-8px);
+  background: rgba(255, 183, 197, 0.95);
+  box-shadow: 0 8px 24px rgba(255, 183, 197, 0.4);
+}
+
+.nav-box-content {
+  width: 100%;
+  text-align: center;
+}
+
+.nav-title {
+  font-family: aktiv-grotesk, sans-serif;
+  font-size: 28px;
+  font-weight: bold;
+  color: #fff;
+  margin: 0 0 20px 0;
+  letter-spacing: 0.05em;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.nav-description {
+  font-family: aktiv-grotesk, sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.9);
+  line-height: 1.6;
+  margin: 0;
+  letter-spacing: 0.05em;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 /* 响应式 */
@@ -203,6 +306,61 @@ export default {
 
   .intro-logo-container {
     gap: 6px;
+  }
+
+  .home-content {
+    padding-bottom: 30px;
+    gap: 30px;
+  }
+
+  .home-content h1 {
+    font-size: 18px;
+  }
+
+  .navigation-boxes {
+    flex-direction: column;
+    gap: 20px;
+    padding: 0 15px;
+  }
+
+  .nav-box {
+    max-width: 100%;
+    width: 100%;
+    min-width: auto;
+    padding: 30px 20px;
+    min-height: 160px;
+  }
+
+  .nav-title {
+    font-size: 24px;
+    margin-bottom: 15px;
+    color: #fff;
+  }
+
+  .nav-description {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.9);
+  }
+}
+
+@media screen and (max-width: 1024px) and (min-width: 769px) {
+  .navigation-boxes {
+    gap: 20px;
+  }
+
+  .nav-box {
+    max-width: 280px;
+    padding: 35px 25px;
+    min-height: 180px;
+  }
+
+  .nav-title {
+    font-size: 26px;
+    color: #fff;
+  }
+
+  .nav-description {
+    color: rgba(255, 255, 255, 0.9);
   }
 }
 </style>

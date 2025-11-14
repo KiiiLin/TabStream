@@ -2,7 +2,7 @@
   <div :class="{ 'intro-animation-complete': introComplete }">
     <HeaderMain :class="{ 'header-hidden': !introComplete && isHomePage }" />
     <router-view @intro-complete="handleIntroComplete" />
-    <FooterMain />
+    <FooterMain :class="{ 'footer-hidden': !introComplete && isHomePage }" />
   </div>
 </template>
 
@@ -43,6 +43,11 @@ export default {
 
 <style>
 .header-hidden {
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+.footer-hidden {
   opacity: 0 !important;
   pointer-events: none !important;
 }
